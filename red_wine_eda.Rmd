@@ -1,0 +1,297 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+RED WINE EDA CONNOR ZARKOWSKI
+========================================================
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
+# Load all of the packages that you end up using in your analysis in this code
+# chunk.
+
+# Notice that the parameter "echo" was set to FALSE for this code chunk. This
+# prevents the code from displaying in the knitted HTML output. You should set
+# echo=FALSE for all code chunks in your file, unless it makes sense for your
+# report to show the code that generated a particular plot.
+
+# The other parameters for "message" and "warning" should also be set to FALSE
+# for other code chunks once you have verified that each plot comes out as you
+# want it to. This will clean up the flow of your report.
+
+library(ggplot2)
+library(GGally)
+library(gridExtra)
+```
+
+```{r echo=FALSE, Load_the_Data}
+# Load the Data
+wine = read.csv("wineQualityReds.csv")
+```
+
+The following dataset contains information about a sample of red wines. Our \
+goal is to explore the data to see how it is structured, and analyze \
+relationships between the variables. Primarily I want to see if there are any\
+strong relationships between quality and the other variables. 
+
+```{r echo=FALSE}
+str(wine)
+summary(wine)
+```
+
+Looking at the structure and summary of the data we can get an idea of what \
+the dataset looks like and the range of values for each variable. Next we'll \
+look more closely at individual variables.
+
+# Univariate Plots Section
+
+```{r echo=FALSE, Univariate_Plots}
+qplot(alcohol, data= wine, geom= "histogram", color =I('black'), 
+      fill = I('#008080'), bins= 40)
+```
+
+```{r echo=FALSE}
+qplot(density, data= wine, geom= "histogram", color =I('black'), 
+      fill = I('#008080'), bins= 30)
+```
+
+```{r echo=FALSE}
+qplot(pH, data= wine, geom= "histogram", color =I('black'), 
+      fill = I('#008080'), bins= 30)
+```
+
+```{r echo=FALSE}
+qplot(quality, data= wine, geom= "histogram", color =I('black'), 
+      fill = I('#008080'), bins= 16)
+```
+
+```{r echo=FALSE}
+qplot(citric.acid, data= wine, geom= "histogram", color =I('black'), 
+      fill = I('#008080'), bins= 30)
+```
+
+```{r echo=FALSE}
+qplot(fixed.acidity, data= wine, geom= "histogram", color =I('black'), 
+      fill = I('#008080'), bins= 30)
+```
+
+```{r echo= FALSE}
+qplot(volatile.acidity, data= wine, geom= "histogram", color =I('black'), 
+      fill = I('#008080'), bins= 30)
+```
+
+The distributions of the variables of interest either follow a normal or skewed\
+distribution. The average alcohol percentage is 10.4. PH falls between a range \
+of 2.7 and 4. Quality ranges from a rating of 3 to 8. 
+
+# Univariate Analysis
+
+### What is the structure of your dataset?
+
+The dataset contains 1599 wines, with each observation having 13 \
+variables corresponding to it. 
+
+### What is/are the main feature(s) of interest in your dataset?
+
+The main features are alcohol, density, fixed and volatile acidity, and pH. \
+These are metricsI've heard people talk about when tasting wine.
+
+### What other features in the dataset do you think will help support your \
+investigation into your feature(s) of interest?
+
+When looking at fixed and volatile acidity it will be helpful to see the \
+relationship they have with citric acid and pH. 
+
+### Did you create any new variables from existing variables in the dataset?
+
+No new variables were created.
+
+### Of the features you investigated, were there any unusual distributions? \
+Did you perform any operations on the data to tidy, adjust, or change the form \
+of the data? If so, why did you do this?
+
+There were no unusual distributions, they were all either normal or skewed to \
+one side. I did not perform any operations on the data. 
+
+
+# Bivariate Plots Section
+
+```{r echo=FALSE, fig.width=15, fig.height=9}
+ggpairs(wine)
+```
+
+Running ggpairs, quality was most strongly correlated with alcohol and \
+volatile acidity. Fixed acidity was strongly correlated with density, pH and \
+citric acid.
+
+```{r echo=FALSE, Bivariate_Plots}
+ggplot(aes(x= quality, y= alcohol), data= wine) + geom_jitter()
+```
+
+There is a positive correlation between alcohol and quality.
+
+```{r echo=FALSE}
+ggplot(aes(x= density, y= alcohol), data= wine) + geom_jitter()
+```
+
+There is a moderate correlation between alcohol and density. 
+
+```{r echo=FALSE}
+ggplot(aes(x= quality, y= volatile.acidity), data= wine) + geom_jitter()
+```
+
+There is a negative correlation between volatile acidity and quality, it also \
+appears that the range of values for volatile.acidity decrease as quality \
+increases. 
+
+```{r echo=FALSE}
+ggplot(aes(x= volatile.acidity, y= citric.acid), data= wine) + geom_jitter()
+```
+
+There is a negative correlation between the two variables, the higher the \
+volatile acidity, the lower amount of citric acid.
+
+# Bivariate Analysis
+
+### Talk about some of the relationships you observed in this part of the \
+investigation. How did the feature(s) of interest vary with other features in \
+the dataset?
+
+Alcohol and volatile acidity had the strongest correlation to quality. Density \
+had a strong relatinship to alcohol, and volatile and citric acid were also \
+strongly correlated. I had thought sulphates would be related to quality, \
+however there weren't any notable relationships. 
+
+### Did you observe any interesting relationships between the other features \
+(not the main feature(s) of interest)?
+
+There appeared to be a relationship between all the varibles having to do with \
+acid (pH, fixed.acidity, volatile.acidity, and citric.acid), it will be \
+interesting to do a multivariate analysis between them.
+
+### What was the strongest relationship you found?
+
+The strongest relationship was between fixed acidity and pH. This was an \
+expected relationship since wine gets most of it's acidity from the grapes\
+themselves, and pH is a measure of overall acidity. 
+
+# Multivariate Plots Section
+
+```{r echo=FALSE, Multivariate_Plots}
+ggplot(aes(x= quality, y= alcohol, color= density), data= wine) + geom_jitter()
+```
+
+We can see here that although density and quality aren't strongly correlated, \
+there appears to be a trend where as alcohol and quality rise, density also \
+seems to decrease.  
+
+```{r echo=FALSE}
+ggplot(aes(x=alcohol, y=density, color=fixed.acidity), data= wine) + 
+  geom_jitter()
+```
+
+Density had significant correlations with both fixed acidity and alcohol, so I \
+wanted to visualize the three variables together. We can see that as alcohol \
+increases, density and fixed acidity decrease. 
+
+```{r echo=FALSE}
+ggplot(aes(x= quality, y= volatile.acidity, color= citric.acid), data= wine) +
+  geom_jitter()
+```
+
+Volatile acidity had the second strongest correlation to quality, and was \
+negatively correlated with citric acid. In this plot we can see both the \
+negative correlation between volatile acidity and quality, and the negative \
+correlation between volatile acidity and citric acid. 
+
+```{r echo=FALSE}
+ggplot(aes(x= volatile.acidity, y= citric.acid), data= wine) + geom_jitter() +
+  facet_wrap(~quality)
+```
+
+Here I wanted to see if the correlation between volatile acidity and citric \
+acid changed as quality increased, it doesn't appear to make a difference. 
+
+```{r echo=FALSE}
+p1<-ggplot(aes(x=citric.acid, y= fixed.acidity, color= pH), data= wine) + 
+  geom_jitter()
+p2<-ggplot(aes(x=citric.acid, y= volatile.acidity, color= pH), data= wine) + 
+  geom_jitter()
+grid.arrange(p1,p2,ncol=2)
+```
+
+Fixed acidity, volatile acidity, and citric acid all affect the pH of the wine, \
+so I wanted to make a visualization of all four variables to help illustrate \
+trends between them. We can see that citric acid and pH are positively \
+correlated, while fixed and volatile acidty have inverse relationships to \
+citric acid. 
+
+# Multivariate Analysis
+
+### Talk about some of the relationships you observed in this part of the \
+investigation. Were there features that strengthened each other in terms of \
+looking at your feature(s) of interest?
+
+
+### Were there any interesting or surprising interactions between features?
+
+I was surprised to see the inverse correlation between fixed and volatile \
+acidity and citric acid. I also suspected that as wine quality got higher there \
+would be less use of citirc acid as an additive, but it seems that higher \
+quality wines still use it. 
+
+------
+
+# Final Plots and Summary
+
+### Plot One
+```{r echo=FALSE, Plot_One}
+ggplot(aes(x= quality, y= alcohol, color= density), data= wine) + 
+  geom_jitter() + ggtitle('Quality, Alcohol, and Density')
+```
+
+This plot shows the relationship between alcohol and quality, as well as the \
+relationship between alcohol and density. As the quality of wine increases \
+there is a positive correlation with the percentage of alcohol and an overall \
+decrease in the wine's density.
+
+
+### Plot Two
+```{r echo=FALSE, Plot_Two}
+ggplot(aes(x= volatile.acidity, y= citric.acid), data= wine) + 
+  geom_jitter(alpha=0.4) + facet_wrap(~quality) + 
+  ggtitle('Correlation of Volatile Acidity and Citric Acid by Quality')
+```
+
+### Description Two
+Citric acid can often be added after wine has fermented to give it a fresher \
+taste, I wanted to see if citric acid use decreased as the quality of the \
+wine increased, but it seems that the average amount used stays consistent.
+
+### Plot Three
+```{r echo=FALSE, Plot_Three}
+p1<-ggplot(aes(x=citric.acid, y= fixed.acidity, color= pH), data= wine) + 
+  geom_jitter()
+p2<-ggplot(aes(x=citric.acid, y= volatile.acidity, color= pH), data= wine) + 
+  geom_jitter()
+grid.arrange(p1,p2,ncol=2, top= 'Acidic Variables and pH')
+```
+
+### Description Three
+While volatile acidity was the only variable with a significant correlation to \
+quality, all of the variables having to do with acid had relationships with \
+each other. This plot shows that higher instances of fixed acidity, volatile \
+acidity, or citric acid correspond to a lower, more acidic pH. 
+
+# Reflection
+
+It appears that there is not a single variable that can predict the quality of\
+a wine, it is the combination of many variables. Alcohol and volatile acidity \
+are correlated with quality, but they also have correlations with other \
+variables in the dataset. I have almost no background in wine, so I struggled \
+in the beginning to understand what each of the variables was measuring. I \
+would like to know more about the sample of wines, where it was from and what \
+the ages were of each wine. In the future further analysis could be done with \
+the sulpher-related variables, I have heard the term when people talk about \
+wine, but did not find any meaningful relationships during my analysis. Also a \
+linear model could be built to predict a wine's quality. 
